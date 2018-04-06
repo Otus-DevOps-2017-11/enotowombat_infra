@@ -7,3 +7,10 @@ variables.json
 *.save
 *.swp
 jdauphant.nginx
+
+# Vagrant & molecule
+.vagrant/
+*.log
+*.pyc
+.molecule
+.cache
