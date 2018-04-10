@@ -272,8 +272,14 @@ Verifier completed successfully.
 Таски удаляем, добавляем роли
 
 
-### Добавляем в app.json, db.json:
+### Добавляем
+app.json:
 ```
 "extra_arguments": ["--tags","ruby"],
+"ansible_env_vars": ["ANSIBLE_ROLES_PATH={{ pwd }}/ansible/roles"]
+```
+db.json:
+```
+"extra_arguments": ["--tags","install"],
 "ansible_env_vars": ["ANSIBLE_ROLES_PATH={{ pwd }}/ansible/roles"]
 ```
