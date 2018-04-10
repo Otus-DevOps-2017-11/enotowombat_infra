@@ -201,3 +201,79 @@ reddit-db | SUCCESS => {
 - в плейбуках прописал сразу группы для static и dynamic inventory в hosts. `app, tag_reddit-app`, `db, tag_reddit-db`
 - 80 порт в app модуле tf добавляется отдельным ресурсом firewall_http
 - почищены `.swp`, `.save`, добавлены в `.gitignore`
+
+
+# HW 13 Ansible-4
+
+### * Дополните конфигурацию Vagrant для корректной работы проксирования приложения с помощью nginx
+
+`extra_vars`:
+```
+         nginx_sites: {
+           default: [
+            "listen 80",
+            "server_name reddit",
+            "location / {
+            proxy_pass http://127.0.0.1:9292;
+            }"
+          ]
+        }
+```
+
+
+### Напишите тест к роли db для проверки того, что БД слушает по нужному порту (27017)
+
+Можно использовать Socket, работает, но пишет deprication warning (и про File тоже):
+
+```
+    tests/test_default.py ....                                               [100%]
+    
+    =============================== warnings summary ===============================
+    None
+      File fixture is deprecated. Use host fixture and get File module with host.file
+      Socket fixture is deprecated. Use host fixture and get Socket module with host.socket
+      TestinfraBackend fixture is deprecated. Use host fixture and get backend with host.backend
+    
+    -- Docs: http://doc.pytest.org/en/latest/warnings.html
+    ==================== 4 passed, 3 warnings in 11.17 seconds =====================
+Verifier completed successfully.
+```
+
+
+Тогда используем host:
+
+```
+$ molecule verify
+--> Validating schema /Users/vadim/hw13_1/enotowombat_infra/ansible/roles/db/molecule/default/molecule.yml.
+Validation completed successfully.
+--> Test matrix
+    
+└── default
+    └── verify
+    
+--> Scenario: 'default'
+--> Action: 'verify'
+--> Executing Testinfra tests found in /Users/vadim/hw13_1/enotowombat_infra/ansible/roles/db/molecule/default/tests/...
+    ============================= test session starts ==============================
+    platform darwin -- Python 2.7.10, pytest-3.5.0, py-1.5.3, pluggy-0.6.0
+    rootdir: /Users/vadim/hw13_1/enotowombat_infra/ansible/roles/db/molecule/default, inifile:
+    plugins: testinfra-1.11.1
+collected 4 items                                                              
+    
+    tests/test_default.py ....                                               [100%]
+    
+    ========================== 4 passed in 11.24 seconds ===========================
+Verifier completed successfully.
+```
+
+
+### Используйте роли db и app в плейбуках packer_db.yml и packer_app.yml
+
+Таски удаляем, добавляем роли
+
+
+### Добавляем в app.json, db.json:
+```
+"extra_arguments": ["--tags","ruby"],
+"ansible_env_vars": ["ANSIBLE_ROLES_PATH={{ pwd }}/ansible/roles"]
+```

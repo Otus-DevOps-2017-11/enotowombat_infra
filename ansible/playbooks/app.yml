@@ -4,7 +4,6 @@
     - app
     - tag_reddit-app
   become: true
-  become: true
 
   roles:
     - app
